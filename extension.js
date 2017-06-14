@@ -12,6 +12,7 @@ define(function(require, exports, module) {
 		name: 'uglifyjs',
 	}, {
 		worker: null,
+		watcher: null,
 		compilerName: 'UglifyJS',
 		init: function() {
 			var self = this;
@@ -22,7 +23,7 @@ define(function(require, exports, module) {
 				self.onWorker(e.data);
 			};
 			
-			EditorCompiler.addWatcher(this.name, {
+			this.watcher = EditorCompiler.addWatcher(this.name, {
 				property: 'source',
 				extensions: ['js'],
 				watch: this.onWatch.bind(this),
@@ -32,10 +33,11 @@ define(function(require, exports, module) {
 			this.worker.terminate();
 			this.worker = null;
 			
+			this.watcher = null;
 			EditorCompiler.removeWatcher(this.name);
 		},
 		onWatch: function(workspaceId, obj, session, value) {
-			EditorCompiler.addCompiler(this.compilerName, workspaceId, obj, function(compiler) {
+			EditorCompiler.addCompiler(this.watcher, this.compilerName, workspaceId, obj, function(compiler) {
 				this.worker.postMessage({
 					action: 'compile',
 					id: compiler.id,
