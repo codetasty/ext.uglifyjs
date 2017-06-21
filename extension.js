@@ -17,7 +17,7 @@ define(function(require, exports, module) {
 		init: function() {
 			var self = this;
 			
-			this.worker = new Worker(this.getBaseUrl() + '/worker.js');
+			this.worker = new Worker(this.getBaseUrl() + '/worker.js?rev=' + this.version);
 			
 			this.worker.onmessage = function(e) {
 				self.onWorker(e.data);
